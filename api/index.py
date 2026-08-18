@@ -1,14 +1,27 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from pathlib import Path
 
 app = FastAPI()
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+# Homepage
+@app.get("/", include_in_schema=False)
+def home():
+    return FileResponse(BASE_DIR / "index.html")
+
+
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
 
 l = {
     "1": "Apple",
