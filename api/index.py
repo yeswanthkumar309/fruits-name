@@ -28,7 +28,7 @@ likes = {
 
 
 # GET - Get all fruits
-@app.get("/getList/")
+@app.get("/api/getList/")
 def get_list():
     return {
         id: {
@@ -40,7 +40,7 @@ def get_list():
 
 
 # POST - Add fruit
-@app.post("/postList/")
+@app.post("/api/postList/")
 async def add_fruit(request: Request):
     item = await request.json()
 
@@ -52,7 +52,7 @@ async def add_fruit(request: Request):
 
 
 # DELETE - Delete fruit
-@app.delete("/deleteList/{id}")
+@app.delete("/api/deleteList/{id}")
 def delete_fruit(id: str):
     if id not in l:
         return {"error": "Fruit not found"}
@@ -64,7 +64,7 @@ def delete_fruit(id: str):
 
 
 # PUT - Edit fruit
-@app.put("/updateList/{id}")
+@app.put("/api/updateList/{id}")
 async def update_fruit(id: str, request: Request):
     item = await request.json()
 
@@ -77,7 +77,7 @@ async def update_fruit(id: str, request: Request):
 
 
 # POST - Like fruit
-@app.post("/like/{id}")
+@app.post("/api/like/{id}")
 def like_fruit(id: str):
     if id not in l:
         return {"error": "Fruit not found"}
@@ -91,7 +91,7 @@ def like_fruit(id: str):
 
 
 # GET - Search fruit
-@app.get("/search/")
+@app.get("/api/search/")
 def search_fruit(name: str):
     return {
         id: {
