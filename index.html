@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Fruit App</title>
+</head>
+
+<body>
+
+<h1>Fruit List</h1>
+
+<button onclick="getList()">Get Fruit List</button>
+
+<br><br>
+
+<input id="search" placeholder="Search fruit">
+<button onclick="searchFruit()">Search</button>
+
+<ul id="fruit-list"></ul>
+
+<h2>Add New Fruit</h2>
+
+<input id="newFruit" placeholder="Enter fruit name">
+<button onclick="addFruit()">Add Fruit</button>
+
+
+<script>
+
+const API = "http://127.0.0.1:8000";
+
+
+/* GET */
+function getList() {
+
+    fetch(API + "/getList/")
+        .then(response => response.json())
+        .then(data => display(data));
+}
+
+
+/* Display fruits */
+function display(data) {
+
+    const list = document.getElementById("fruit-list");
+
+    list.innerHTML = "";
+
+    for (const id in data) {
+
+        const li = document.createElement("li");
+
+        li.innerHTML = `
+            ${data[id].name}
+            ❤️ ${data[id].likes}
+
+            <button onclick="likeFruit('${id}')">
+                Like
+            </button>
+
+            <button onclick="editFruit('${id}', '${data[id].name}')">
+                Edit
+            </button>
+
+            <button onclick="deleteFruit('${id}')">
+                Delete
+            </button>
+        `;
+
+        list.appendChild(li);
+    }
+}
+
+
+/* POST - Add */
+function addFruit() {
+
+    const fruitName =
+        document.getElementById("newFruit").value;
+
+    fetch(API + "/postList/", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            item: fruitName
+        })
+
+    })
+    .then(response => response.json())
+    .then(() => {
+
+        document.getElementById("newFruit").value = "";
+
+        getList();
+    });
+}
+
+
+/* DELETE */
+function deleteFruit(id) {
+
+    fetch(API + "/deleteList/" + id, {
+
+        method: "DELETE"
+
+    })
+    .then(response => response.json())
+    .then(() => {
+
+        getList();
+    });
+}
+
+
+/* PUT - Edit */
+function editFruit(id, oldName) {
+
+    const newName = prompt(
+        "Enter new fruit name:",
+        oldName
+    );
+
+    if (!newName) {
+        return;
+    }
+
+    fetch(API + "/updateList/" + id, {
+
+        method: "PUT",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            item: newName
+        })
+
+    })
+    .then(response => response.json())
+    .then(() => {
+
+        getList();
+    });
+}
+
+
+/* POST - Like */
+function likeFruit(id) {
+
+    fetch(API + "/like/" + id, {
+
+        method: "POST"
+
+    })
+    .then(response => response.json())
+    .then(() => {
+
+        getList();
+    });
+}
+
+
+/* GET - Search */
+function searchFruit() {
+
+    const name =
+        document.getElementById("search").value;
+
+    fetch(API + "/search/?name=" + name)
+
+        .then(response => response.json())
+
+        .then(data => display(data));
+}
+
+</script>
+
+</body>
+</html>
